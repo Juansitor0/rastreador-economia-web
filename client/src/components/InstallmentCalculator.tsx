@@ -68,8 +68,8 @@ export default function InstallmentCalculator({
   let totalInterest = 0;
 
   if (remaining > 0 && calculationType === "with-interest") {
-    const annualRate = parseFloat(interestRate) / 100;
-    const monthlyRate = interestPeriod === "annual" ? annualRate / 12 : annualRate / 100;
+    const rate = parseFloat(interestRate) / 100;
+    const monthlyRate = interestPeriod === "annual" ? rate / 12 : rate;
 
     if (monthlyRate > 0) {
       // Fórmula correta: PMT = P * [r(1+r)^n] / [(1+r)^n - 1]
