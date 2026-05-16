@@ -62,7 +62,7 @@ export default function InstallmentCalculator({
   // Cálculo sem juros
   const monthlyPaymentNoInterest = remaining > 0 ? remaining / selectedMonths : 0;
 
-  // Cálculo com juros - CORRIGIDO
+  // Cálculo com juros simples
   let monthlyPaymentWithInterest = 0;
   let totalWithInterest = 0;
   let totalInterest = 0;
@@ -72,12 +72,11 @@ export default function InstallmentCalculator({
     const monthlyRate = interestPeriod === "annual" ? rate / 12 : rate;
 
     if (monthlyRate > 0) {
-      // Fórmula correta: PMT = P * [r(1+r)^n] / [(1+r)^n - 1]
-      const numerator = monthlyRate * Math.pow(1 + monthlyRate, selectedMonths);
-      const denominator = Math.pow(1 + monthlyRate, selectedMonths) - 1;
-      monthlyPaymentWithInterest = (remaining * numerator) / denominator;
-      totalWithInterest = monthlyPaymentWithInterest * selectedMonths;
-      totalInterest = totalWithInterest - remaining;
+      const monthlyPrincipal = remaining / selectedMonths;
+      const monthlyInterest = remaining * monthlyRate;
+      monthlyPaymentWithInterest = monthlyPrincipal + monthlyInterest;
+      totalInterest = monthlyInterest * selectedMonths;
+      totalWithInterest = remaining + totalInterest;
     } else {
       monthlyPaymentWithInterest = remaining / selectedMonths;
       totalWithInterest = remaining;
@@ -85,8 +84,8 @@ export default function InstallmentCalculator({
     }
   }
 
-  const monthlyPayment = calculationType === "no-interest" 
-    ? monthlyPaymentNoInterest 
+  const monthlyPayment = calculationType === "no-interest"
+    ? monthlyPaymentNoInterest
     : monthlyPaymentWithInterest;
   
   const totalPayment = calculationType === "no-interest" 
