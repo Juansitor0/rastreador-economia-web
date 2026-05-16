@@ -72,11 +72,12 @@ export default function InstallmentCalculator({
     const monthlyRate = interestPeriod === "annual" ? rate / 12 : rate;
 
     if (monthlyRate > 0) {
-      const monthlyPrincipal = remaining / selectedMonths;
-      const monthlyInterest = remaining * monthlyRate;
-      monthlyPaymentWithInterest = monthlyPrincipal + monthlyInterest;
-      totalInterest = monthlyInterest * selectedMonths;
-      totalWithInterest = remaining + totalInterest;
+      const numerator = monthlyRate * Math.pow(1 + monthlyRate, selectedMonths);
+      const denominator = Math.pow(1 + monthlyRate, selectedMonths) - 1;
+      const amortizedPayment = (remaining * numerator) / denominator;
+      totalWithInterest = amortizedPayment * selectedMonths;
+      totalInterest = totalWithInterest - remaining;
+      monthlyPaymentWithInterest = remaining / selectedMonths + totalInterest / selectedMonths;
     } else {
       monthlyPaymentWithInterest = remaining / selectedMonths;
       totalWithInterest = remaining;
@@ -152,12 +153,12 @@ export default function InstallmentCalculator({
                   <input
                     type="radio"
                     checked={!!customEntry}
-                    onChange={() => setEntryPercentage(30)}
+                    onChange={() => setCustomEntry("0")}
                     className="w-4 h-4"
                   />
                   <span className="text-sm text-gray-700">Valor fixo</span>
                 </label>
-                {customEntry && (
+                {customEntry !== "" && (
                   <div className="ml-6">
                     <Input
                       type="text"
