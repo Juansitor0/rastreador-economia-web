@@ -1,6 +1,7 @@
 {
   "version": 2,
-  "installCommand": "pnpm install --no-frozen-lockfile",
+  "installCommand": "corepack enable && pnpm install --no-frozen-lockfile",
+  "buildCommand": "pnpm build",
   "builds": [
     {
       "src": "server/index.ts",
